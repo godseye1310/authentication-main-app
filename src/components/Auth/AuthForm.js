@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react';
 
 import classes from './AuthForm.module.css';
+import useAuth from '../../store/auth-context';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 const API_KEY = 'AIzaSyDzwEjIvWQsoay8pviwSR53woljwKRkOVY';
 const API_SIGNUP_URL = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`;
@@ -9,6 +11,10 @@ const API_SIGNIN_URL = `https://identitytoolkit.googleapis.com/v1/accounts:signI
 const AuthForm = () => {
 	const emailInputRef = useRef();
 	const passwordInputRef = useRef();
+
+	const navigate = useHistory();
+
+	const { login } = useAuth();
 
 	const [isLogin, setIsLogin] = useState(true);
 	const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +39,7 @@ const AuthForm = () => {
 
 		try {
 			if (isLogin) {
-				// SIGN IN LOGIC...
+				// SIGN IN LOGIC...(Logging in Account)
 				const response = await fetch(API_SIGNIN_URL, {
 					method: 'POST',
 					body: JSON.stringify(userData),
@@ -45,19 +51,21 @@ const AuthForm = () => {
 
 				if (response.ok) {
 					const data = await response.json();
-					console.log(data);
-					console.log('idToken (JWT) : ', data.idToken); //log idToken
+					// console.log(data);
+					// console.log('idToken (JWT) : ', data.idToken); //log idToken
+					login(data.idToken);
+					navigate.replace('/');
 				} else {
 					const errorData = await response.json();
 					console.log(errorData);
-					// can show an error modal
+					// can show an Failed Login error modal
 					let errorMessage = 'Login Failed ' + errorData.error.message;
 					throw new Error(errorMessage);
 				}
 
 				////
 			} else {
-				// SIGN UP LOGIC //
+				// SIGN UP LOGIC (Create Account)//
 				const response = await fetch(API_SIGNUP_URL, {
 					method: 'POST',
 					body: JSON.stringify(userData),
@@ -68,13 +76,16 @@ const AuthForm = () => {
 				setIsLoading(false);
 				if (response.ok) {
 					console.log('Success:', response.status);
+					const data = await response.json();
+					console.log(data);
+					login(data.idToken);
 
 					emailInputRef.current.value = '';
 					passwordInputRef.current.value = '';
 					// ...
 				} else {
 					const data = await response.json();
-					// show an error modal
+					// show an error Failed SignUp modal
 					console.error('Error:', data);
 					let errorMessage = 'Authentication Failed';
 					if (data && data.error && data.error.message) {
