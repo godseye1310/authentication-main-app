@@ -7,10 +7,10 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 const MainNavigation = () => {
 	const { isLoggedIn, logout } = useAuth();
 
-	const navigate = useHistory();
+	const navigateTo = useHistory();
 
 	const handleLogout = () => {
-		navigate.replace('/auth');
+		navigateTo.replace('/auth');
 		logout();
 	};
 
