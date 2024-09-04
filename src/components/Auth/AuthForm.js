@@ -12,7 +12,7 @@ const AuthForm = () => {
 	const emailInputRef = useRef();
 	const passwordInputRef = useRef();
 
-	const navigate = useHistory();
+	const navigateTo = useHistory();
 
 	const { login } = useAuth();
 
@@ -54,7 +54,7 @@ const AuthForm = () => {
 					// console.log(data);
 					// console.log('idToken (JWT) : ', data.idToken); //log idToken
 					login(data.idToken);
-					navigate.replace('/');
+					navigateTo.replace('/');
 				} else {
 					const errorData = await response.json();
 					console.log(errorData);
