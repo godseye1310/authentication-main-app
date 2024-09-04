@@ -2,44 +2,62 @@ import { useState, useRef } from 'react';
 
 import classes from './AuthForm.module.css';
 
+const API_KEY = 'AIzaSyDzwEjIvWQsoay8pviwSR53woljwKRkOVY';
+const API_SIGNUP_URL = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`;
+
 const AuthForm = () => {
 	const emailInputRef = useRef();
 	const passwordInputRef = useRef();
+
 	const [isLogin, setIsLogin] = useState(true);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const switchAuthModeHandler = () => {
 		setIsLogin((prevState) => !prevState);
 	};
 
-	const submitHandler = (e) => {
-		e.preventDefult();
+	const submitHandler = async (e) => {
+		e.preventDefault();
 
-		const enterdEmail = emailInputRef.current.value;
+		const enteredEmail = emailInputRef.current.value;
 		const enteredPassword = passwordInputRef.current.value;
 
-		if (isLogin) {
-		} else {
-			fetch(
-				'https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=AIzaSyDzwEjIvWQsoay8pviwSR53woljwKRkOVY',
-				{
+		const userData = {
+			email: enteredEmail,
+			password: enteredPassword,
+			returnSecureToken: true,
+		};
+
+		setIsLoading(true);
+
+		try {
+			if (isLogin) {
+				// ...
+			} else {
+				const response = await fetch(API_SIGNUP_URL, {
 					method: 'POST',
-					body: JSON.stringify({
-						email: enterdEmail,
-						password: enteredPassword,
-						returnSecureToken: true,
-					}),
+					body: JSON.stringify(userData),
 					headers: {
 						'Content-Type': 'application/json',
 					},
-				}
-			).then((res) => {
-				if (res.ok) {
+				});
+				setIsLoading(false);
+				if (response.ok) {
+					console.log('Success:', response.statusText);
+					// ...
 				} else {
-					return res.json().then((data) => {
-						console.log(data);
-					});
+					const data = await response.json();
+					// show an error modal
+					console.error('Error:', data);
+					let errorMessage = 'Authentication Failed';
+					if (data && data.error && data.error.message) {
+						errorMessage = data.error.message;
+					}
+					alert(errorMessage);
 				}
-			});
+			}
+		} catch (error) {
+			console.error('Something went wrong:', error.message);
 		}
 	};
 
@@ -53,9 +71,21 @@ const AuthForm = () => {
 				</div>
 				<div className={classes.control}>
 					<label htmlFor="password">Your Password</label>
-					<input type="password" id="password" required ref={passwordInputRef} />
+					<input
+						type="password"
+						id="password"
+						required
+						ref={passwordInputRef}
+						autoComplete=""
+					/>
 				</div>
 				<div className={classes.actions}>
+					{!isLoading && (
+						<button type="submit">{isLogin ? 'Login' : 'Create Account'}</button>
+					)}
+					{isLoading && (
+						<img src="https://i.gifer.com/9izJ.gif" alt="creating acc" height="35px" />
+					)}
 					<button
 						type="button"
 						className={classes.toggle}
