@@ -4,6 +4,7 @@ import classes from './AuthForm.module.css';
 
 const API_KEY = 'AIzaSyDzwEjIvWQsoay8pviwSR53woljwKRkOVY';
 const API_SIGNUP_URL = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`;
+const API_SIGNIN_URL = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`;
 
 const AuthForm = () => {
 	const emailInputRef = useRef();
@@ -32,8 +33,31 @@ const AuthForm = () => {
 
 		try {
 			if (isLogin) {
-				// ...
+				// SIGN IN LOGIC...
+				const response = await fetch(API_SIGNIN_URL, {
+					method: 'POST',
+					body: JSON.stringify(userData),
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				});
+				setIsLoading(false);
+
+				if (response.ok) {
+					const data = await response.json();
+					console.log(data);
+					console.log('idToken (JWT) : ', data.idToken); //log idToken
+				} else {
+					const errorData = await response.json();
+					console.log(errorData);
+					// can show an error modal
+					let errorMessage = 'Login Failed ' + errorData.error.message;
+					throw new Error(errorMessage);
+				}
+
+				////
 			} else {
+				// SIGN UP LOGIC //
 				const response = await fetch(API_SIGNUP_URL, {
 					method: 'POST',
 					body: JSON.stringify(userData),
@@ -43,7 +67,10 @@ const AuthForm = () => {
 				});
 				setIsLoading(false);
 				if (response.ok) {
-					console.log('Success:', response.statusText);
+					console.log('Success:', response.status);
+
+					emailInputRef.current.value = '';
+					passwordInputRef.current.value = '';
 					// ...
 				} else {
 					const data = await response.json();
@@ -57,7 +84,8 @@ const AuthForm = () => {
 				}
 			}
 		} catch (error) {
-			console.error('Something went wrong:', error.message);
+			// console.error('Something went wrong:', error.message);
+			alert(error.message);
 		}
 	};
 
