@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 const AuthContext = React.createContext();
 
 export const AuthContextProvider = ({ children }) => {
-	const [token, setToken] = useState(localStorage.getItem('token') || null);
+	const [token, setToken] = useState(localStorage.getItem('token'));
 
 	const isLoggedIn = !!token;
 
@@ -19,6 +19,12 @@ export const AuthContextProvider = ({ children }) => {
 
 	useEffect(() => {
 		localStorage.getItem('token');
+		const logTimer = setTimeout(() => {
+			logoutHandler();
+			alert('session expired. Please Login Again');
+		}, 5 * 60 * 1000);
+
+		return () => clearTimeout(logTimer);
 	});
 
 	const ContextValue = {

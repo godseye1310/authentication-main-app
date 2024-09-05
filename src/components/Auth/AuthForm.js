@@ -54,6 +54,8 @@ const AuthForm = () => {
 					// console.log(data);
 					// console.log('idToken (JWT) : ', data.idToken); //log idToken
 					login(data.idToken);
+					data.expiresIn = '300';
+					console.log(data.expiresIn);
 					navigateTo.replace('/');
 				} else {
 					const errorData = await response.json();
