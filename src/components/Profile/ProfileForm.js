@@ -1,9 +1,9 @@
-import { useRef } from 'react';
-import classes from './ProfileForm.module.css';
-import useAuth from '../../store/auth-context';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { useRef } from "react";
+import classes from "./ProfileForm.module.css";
+import useAuth from "../../store/auth-context";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const API_KEY = 'AIzaSyDzwEjIvWQsoay8pviwSR53woljwKRkOVY';
+const API_KEY = "AIzaSyB6WHX075w6NfXcZ3exi2YbjgTFaFRHy50";
 const API_URL = `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${API_KEY}`;
 
 const ProfileForm = () => {
@@ -24,10 +24,10 @@ const ProfileForm = () => {
 		try {
 			if (token) {
 				const response = await fetch(API_URL, {
-					method: 'POST',
+					method: "POST",
 					body: JSON.stringify(psetData),
 					headers: {
-						'Content-Type': 'application/json',
+						"Content-Type": "application/json",
 					},
 				});
 				console.log(response.status);
@@ -35,7 +35,7 @@ const ProfileForm = () => {
 				if (response.ok) {
 					// const data = await response.json();
 					// console.log(data);
-					navigateTo.replace('/');
+					navigateTo.replace("/");
 				}
 			}
 		} catch (error) {

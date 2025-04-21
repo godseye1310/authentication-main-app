@@ -1,10 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState, useRef } from "react";
 
-import classes from './AuthForm.module.css';
-import useAuth from '../../store/auth-context';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import classes from "./AuthForm.module.css";
+import useAuth from "../../store/auth-context";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const API_KEY = 'AIzaSyDzwEjIvWQsoay8pviwSR53woljwKRkOVY';
+const API_KEY = "AIzaSyB6WHX075w6NfXcZ3exi2YbjgTFaFRHy50";
 const API_SIGNUP_URL = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`;
 const API_SIGNIN_URL = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`;
 
@@ -41,10 +41,10 @@ const AuthForm = () => {
 			if (isLogin) {
 				// SIGN IN LOGIC...(Logging in Account)
 				const response = await fetch(API_SIGNIN_URL, {
-					method: 'POST',
+					method: "POST",
 					body: JSON.stringify(userData),
 					headers: {
-						'Content-Type': 'application/json',
+						"Content-Type": "application/json",
 					},
 				});
 				setIsLoading(false);
@@ -54,14 +54,15 @@ const AuthForm = () => {
 					// console.log(data);
 					// console.log('idToken (JWT) : ', data.idToken); //log idToken
 					login(data.idToken);
-					data.expiresIn = '300';
+					data.expiresIn = "300";
 					console.log(data.expiresIn);
-					navigateTo.replace('/');
+					navigateTo.replace("/");
 				} else {
 					const errorData = await response.json();
 					console.log(errorData);
 					// can show an Failed Login error modal
-					let errorMessage = 'Login Failed ' + errorData.error.message;
+					let errorMessage =
+						"Login Failed " + errorData.error.message;
 					throw new Error(errorMessage);
 				}
 
@@ -69,27 +70,27 @@ const AuthForm = () => {
 			} else {
 				// SIGN UP LOGIC (Create Account)//
 				const response = await fetch(API_SIGNUP_URL, {
-					method: 'POST',
+					method: "POST",
 					body: JSON.stringify(userData),
 					headers: {
-						'Content-Type': 'application/json',
+						"Content-Type": "application/json",
 					},
 				});
 				setIsLoading(false);
 				if (response.ok) {
-					console.log('Success:', response.status);
+					console.log("Success:", response.status);
 					const data = await response.json();
 					console.log(data);
 					login(data.idToken);
 
-					emailInputRef.current.value = '';
-					passwordInputRef.current.value = '';
+					emailInputRef.current.value = "";
+					passwordInputRef.current.value = "";
 					// ...
 				} else {
 					const data = await response.json();
 					// show an error Failed SignUp modal
-					console.error('Error:', data);
-					let errorMessage = 'Authentication Failed';
+					console.error("Error:", data);
+					let errorMessage = "Authentication Failed";
 					if (data && data.error && data.error.message) {
 						errorMessage = data.error.message;
 					}
@@ -104,11 +105,16 @@ const AuthForm = () => {
 
 	return (
 		<section className={classes.auth}>
-			<h1>{isLogin ? 'Login' : 'Sign Up'}</h1>
+			<h1>{isLogin ? "Login" : "Sign Up"}</h1>
 			<form onSubmit={submitHandler}>
 				<div className={classes.control}>
 					<label htmlFor="email">Your Email</label>
-					<input type="email" id="email" required ref={emailInputRef} />
+					<input
+						type="email"
+						id="email"
+						required
+						ref={emailInputRef}
+					/>
 				</div>
 				<div className={classes.control}>
 					<label htmlFor="password">Your Password</label>
@@ -122,17 +128,25 @@ const AuthForm = () => {
 				</div>
 				<div className={classes.actions}>
 					{!isLoading && (
-						<button type="submit">{isLogin ? 'Login' : 'Create Account'}</button>
+						<button type="submit">
+							{isLogin ? "Login" : "Create Account"}
+						</button>
 					)}
 					{isLoading && (
-						<img src="https://i.gifer.com/9izJ.gif" alt="creating acc" height="35px" />
+						<img
+							src="https://i.gifer.com/9izJ.gif"
+							alt="creating acc"
+							height="35px"
+						/>
 					)}
 					<button
 						type="button"
 						className={classes.toggle}
 						onClick={switchAuthModeHandler}
 					>
-						{isLogin ? 'Create new account' : 'Login with existing account'}
+						{isLogin
+							? "Create new account"
+							: "Login with existing account"}
 					</button>
 				</div>
 			</form>
